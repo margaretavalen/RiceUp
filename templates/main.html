@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RiceDoc - Deteksi Penyakit Daun Padi</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+  </head>
+  <body>
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
+
+    <div class="container">
+      <div class="header">
+        <h1 class="logo">🌾 RiceDoc</h1>
+        <p class="subtitle">Deteksi Penyakit Daun Padi dengan Teknologi AI</p>
+      </div>
+
+      <div class="main-card">
+        <div class="nav-tabs">
+          <div class="nav-tab active" onclick="switchTab('upload')">
+            <i>📁</i> Upload Gambar
+          </div>
+          <div class="nav-tab" onclick="switchTab('camera')">
+            <i>📷</i> Ambil Foto
+          </div>
+        </div>
+
+        <div class="content">
+          <!-- Upload Tab -->
+          <div id="upload-tab" class="tab-content active">
+            <div
+              class="upload-area"
+              onclick="document.getElementById('fileInput').click()"
+            >
+              <div class="upload-icon">📤</div>
+              <div class="upload-text">
+                Klik atau seret gambar daun padi ke sini
+              </div>
+              <div class="upload-subtext">
+                Format: JPG, PNG, JPEG (Max: 5MB)
+              </div>
+            </div>
+            <input
+              type="file"
+              id="fileInput"
+              class="hidden"
+              accept="image/*"
+              onchange="handleFileUpload(event)"
+            />
+          </div>
+
+          <!-- Camera Tab -->
+          <div id="camera-tab" class="tab-content">
+            <div class="camera-container">
+              <video id="video" autoplay playsinline></video>
+              <div class="camera-controls">
+                <button class="btn btn-primary" onclick="startCamera()">
+                  <i>📹</i> Mulai Kamera
+                </button>
+                <button class="btn btn-secondary" onclick="capturePhoto()">
+                  <i>📸</i> Ambil Foto
+                </button>
+                <button class="btn btn-danger" onclick="stopCamera()">
+                  <i>⏹️</i> Stop Kamera
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preview Section -->
+          <div id="preview-section" class="preview-container hidden">
+            <h3 style="margin-bottom: 20px; color: #2e7d32">Preview Gambar</h3>
+            <img id="preview" alt="Preview" />
+            <br />
+            <button
+              class="btn btn-primary"
+              onclick="analyzeImage()"
+              style="margin-top: 20px"
+            >
+              <i>🔍</i> Analisis Gambar
+            </button>
+          </div>
+
+          <!-- Loading Section -->
+          <div id="loading-section" class="loading">
+            <div class="spinner"></div>
+            <p>Menganalisis gambar daun padi...</p>
+          </div>
+
+          <!-- Results Section -->
+          <div id="results-section" class="results-container hidden">
+            <h3 style="margin-bottom: 20px; color: #e65100">
+              Hasil Deteksi Penyakit
+            </h3>
+            <div id="results-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <canvas id="canvas" class="hidden"></canvas>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>

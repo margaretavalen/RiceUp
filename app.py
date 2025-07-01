@@ -7,8 +7,11 @@ from PIL import Image
 import io
 from io import BytesIO
 import base64
+import os
+from flask_ngrok import run_with_ngrok
 
 app = Flask(__name__)
+run_with_ngrok(app)  # Integrasi ngrok
 
 # Fungsi ekstraksi fitur GLCM
 def extract_glcm_features(image_rgb):
@@ -24,9 +27,13 @@ def extract_glcm_features(image_rgb):
     return features
 
 # Load model, scaler, dan label encoder
-knn_model = joblib.load('model/knn_model.pkl')
-scaler = joblib.load('model/scaler.pkl')
-label_encoder = joblib.load('model/label_encoder.pkl')
+try:
+    knn_model = joblib.load('model/knn_model.pkl')
+    scaler = joblib.load('model/scaler.pkl')
+    label_encoder = joblib.load('model/label_encoder.pkl')
+except Exception as e:
+    print(f"Gagal memuat model: {str(e)}")
+    raise
 
 @app.route('/')
 def index():
@@ -46,8 +53,8 @@ def predict():
             header, encoded = data_url.split(",", 1)
             image_data = base64.b64decode(encoded)
             image = Image.open(BytesIO(image_data)).convert('RGB')
-    except:
-        return jsonify({'error': 'Gagal membaca gambar'}), 400
+    except Exception as e:
+        return jsonify({'error': f'Gagal membaca gambar: {str(e)}'}), 400
 
     if image:
         try:
@@ -58,9 +65,9 @@ def predict():
             result = label_encoder.inverse_transform(prediction)[0]
             return jsonify({'prediction': result})
         except Exception as e:
-            return jsonify({'error': 'Gagal memproses gambar'}), 500
+            return jsonify({'error': f'Gagal memproses gambar: {str(e)}'}), 500
 
     return jsonify({'error': 'Tidak ada gambar valid'}), 400
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()  # Biarkan flask_ngrok menangani konfigurasi
